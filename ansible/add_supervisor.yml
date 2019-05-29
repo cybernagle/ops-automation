@@ -1,0 +1,24 @@
+# use command: ansible-playbook add_supervisor.yml -b -vv
+
+---
+- name: install supervisor 
+  hosts: "{{ host }}"
+  gather_facts: True
+  vars:
+    host: localhost
+
+  pre_tasks:
+    - name: Add Cadvisor and node_exporter To Supervisor
+      set_fact:
+        supervisor_programs:
+          - name: 'cadvisor'
+            command: /usr/local/bin/cadvisor
+            state: present
+          - name: 'node_exporter'
+            command: /usr/local/bin/node_exporter
+            state: present
+  roles:
+    - supervisor
+
+    
+

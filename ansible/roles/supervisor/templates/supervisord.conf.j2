@@ -1,0 +1,28 @@
+[supervisord]
+nodaemon = {{ supervisor_nodaemon }}
+childlogdir = {{ supervisor_log_dir }}
+user = {{ supervisor_user }}
+pidfile = /var/run/supervisord.pid
+
+{% if supervisor_unix_http_server_enable %}
+[unix_http_server]
+file = {{ supervisor_unix_http_server_socket_path }}
+chown = {{ supervisor_user }}
+
+[supervisorctl]
+serverurl = unix://{{ supervisor_unix_http_server_socket_path }}
+{% endif -%}
+
+{%- if supervisor_inet_http_server_enable %}
+[inet_http_server]
+port = {{ supervisor_inet_http_server_port }}
+
+[supervisorctl]
+serverurl = http://localhost:{{ supervisor_inet_http_server_port }}
+{% endif %}
+
+[include]
+files = {{ supervisor_config_path }}/conf.d/*.conf
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
